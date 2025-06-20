@@ -25,7 +25,8 @@
 
 #define LF 13
 
-SoftwareSerial bt(BT_TX, BT_RX);
+// SoftwareSerial expects RX pin first and TX pin second
+SoftwareSerial bt(BT_RX, BT_TX);
 
 /**
  * \brief Read all content from SoftwareSerial object. Replace \n (13) by \0.
@@ -37,8 +38,9 @@ String readLine(SoftwareSerial& s, String& res){
   res="";
   while(s.available()){
     res += (char)s.read();
-    if(int p = res.indexOf(LF)){
-      res[p]='\0';
+    int p = res.indexOf(LF);
+    if (p != -1) {
+      res[p] = '\0';
     }
   }
   return res;
@@ -54,8 +56,9 @@ int readLineSerial(String& res){
   unsigned int i = 0;
   while(Serial.available()){
     res += (char)Serial.read();
-    if(int p = res.indexOf(LF)){
-      res[p]='\0';
+    int p = res.indexOf(LF);
+    if (p != -1) {
+      res[p] = '\0';
     }
     i++;
     
@@ -98,7 +101,7 @@ boolean bt_sendATCommand(const String& cmd, String& response){
   }
   readLine(bt, response);
   
-  return sizeof(response)>=2 && response[0]=='O' && response[1]=='K';
+  return response.length() >= 2 && response[0] == 'O' && response[1] == 'K';
 }
 
 
